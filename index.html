@@ -77,13 +77,18 @@
       display: block;
       overflow-x: auto;
     }
-    /* Table */
+    /* Table + Custom Scroll */
+    .table-wrapper {
+      margin-top: 12px;
+    }
     .table-container {
       overflow-x: auto;
-      margin-top: 10px;
+      scrollbar-width: none; /* hide default */
+      -ms-overflow-style: none;
     }
+    .table-container::-webkit-scrollbar { display: none; }
     table {
-      width: 100%;
+      min-width: 700px;
       border-collapse: collapse;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 12px;
@@ -111,6 +116,41 @@
       border-radius: 6px;
       color: #00e5ff;
     }
+    /* Custom scrollbar */
+    .scrollbar {
+      display: flex;
+      align-items: center;
+      margin-top: 8px;
+      gap: 6px;
+    }
+    .arrow {
+      background: #00f2fe;
+      color: #0a0a0f;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+    .arrow:hover { background: #4facfe; }
+    .track {
+      flex: 1;
+      height: 8px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 6px;
+      position: relative;
+      cursor: pointer;
+    }
+    .thumb {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 80px;
+      height: 100%;
+      background: #00f2fe;
+      border-radius: 6px;
+    }
     /* Animations */
     @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
     @keyframes slideUp { from {transform:translateY(20px);opacity:0;} to {transform:translateY(0);opacity:1;} }
@@ -135,49 +175,57 @@
       <h2>📘 Operator Precedence and Associativity</h2>
       <p>
         When an expression has more than one operator, the program needs rules to decide which operator to perform first. 
-        Operator precedence is the rule that defines this order. Think of it like the order of operations in math (PEMDAS/BODMAS): 
+        <b>Operator precedence</b> is the rule that defines this order. Think of it like the order of operations in math (PEMDAS/BODMAS): 
         multiplication and division come before addition and subtraction. In C#, operators have a predefined precedence.
       </p>
       <p>
-        For example, the multiplication operator * has higher precedence than addition +. Consider the C# statement:
+        For example, the multiplication operator <b>*</b> has higher precedence than addition <b>+</b>. Consider the C# statement:
       </p>
       <div class="code">int x = 4 + 3 * 5;</div>
       <p>
-        Even though + appears first, the multiplication is done first because it has higher precedence. 
-        This means 3 * 5 is calculated to give 15, and then we add 4, resulting in x = 19. 
-        If addition had been done first (ignoring the rules), we would have added 4+3=7 and then multiplied by 5 to get 35, which is not what C# does.
+        Even though <b>+</b> appears first, the multiplication is done first because it has higher precedence. 
+        This means <b>3 * 5</b> is calculated to give 15, and then we add 4, resulting in <b>x = 19</b>. 
+        If addition had been done first, we would have added <b>4+3=7</b> and then multiplied by 5 to get 35, which is not what C# does.
       </p>
       <p>
-        In short, multiplication and division happen before addition and subtraction. You can change the order explicitly by using parentheses, 
+        In short, <b>multiplication and division</b> happen before <b>addition and subtraction</b>. You can change the order explicitly by using parentheses, 
         just like in math. For example:
       </p>
       <div class="code">int x = (4 + 3) * 5; // result = 35</div>
       <p>
-        Parentheses always force that part to be done first, regardless of the normal precedence.
+        <b>Parentheses</b> always force that part to be done first, regardless of the normal precedence.
       </p>
     </div>
 
     <div class="section">
       <h2>📑 Common Operator Precedence in C#</h2>
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr><th>Priority</th><th>Operator Type</th><th>Operators</th><th>Direction</th></tr>
-          </thead>
-          <tbody>
-            <tr><td class="priority">1st</td><td>Parentheses</td><td class="operators">( )</td><td>Left → Right</td></tr>
-            <tr><td class="priority">2nd</td><td>Unary</td><td class="operators">++ -- + - ! ~</td><td>Right → Left</td></tr>
-            <tr><td class="priority">3rd</td><td>Multiplicative</td><td class="operators">* / %</td><td>Left → Right</td></tr>
-            <tr><td class="priority">4th</td><td>Additive</td><td class="operators">+ -</td><td>Left → Right</td></tr>
-            <tr><td class="priority">5th</td><td>Shift</td><td class="operators"><< >></td><td>Left → Right</td></tr>
-            <tr><td class="priority">6th</td><td>Relational</td><td class="operators">< > <= >=</td><td>Left → Right</td></tr>
-            <tr><td class="priority">7th</td><td>Equality</td><td class="operators">== !=</td><td>Left → Right</td></tr>
-            <tr><td class="priority">8th</td><td>Bitwise</td><td class="operators">& ^ |</td><td>Left → Right</td></tr>
-            <tr><td class="priority">9th</td><td>Logical</td><td class="operators">&& ||</td><td>Left → Right</td></tr>
-            <tr><td class="priority">10th</td><td>Ternary</td><td class="operators">? :</td><td>Right → Left</td></tr>
-            <tr><td class="priority">11th</td><td>Assignment</td><td class="operators">= += -= *= /=</td><td>Right → Left</td></tr>
-          </tbody>
-        </table>
+      <div class="table-wrapper">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr><th>Priority</th><th>Operator Type</th><th>Operators</th><th>Direction</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="priority">1st</td><td>Parentheses</td><td class="operators">( )</td><td>Left → Right</td></tr>
+              <tr><td class="priority">2nd</td><td>Unary</td><td class="operators">++ -- + - ! ~</td><td>Right → Left</td></tr>
+              <tr><td class="priority">3rd</td><td>Multiplicative</td><td class="operators">* / %</td><td>Left → Right</td></tr>
+              <tr><td class="priority">4th</td><td>Additive</td><td class="operators">+ -</td><td>Left → Right</td></tr>
+              <tr><td class="priority">5th</td><td>Shift</td><td class="operators">&lt;&lt; &gt;&gt;</td><td>Left → Right</td></tr>
+              <tr><td class="priority">6th</td><td>Relational</td><td class="operators">&lt; &gt; &lt;= &gt;=</td><td>Left → Right</td></tr>
+              <tr><td class="priority">7th</td><td>Equality</td><td class="operators">== !=</td><td>Left → Right</td></tr>
+              <tr><td class="priority">8th</td><td>Bitwise</td><td class="operators">&amp; ^ |</td><td>Left → Right</td></tr>
+              <tr><td class="priority">9th</td><td>Logical</td><td class="operators">&& ||</td><td>Left → Right</td></tr>
+              <tr><td class="priority">10th</td><td>Ternary</td><td class="operators">? :</td><td>Right → Left</td></tr>
+              <tr><td class="priority">11th</td><td>Assignment</td><td class="operators">= += -= *= /=</td><td>Right → Left</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- Custom Scrollbar -->
+        <div class="scrollbar" tabindex="0">
+          <button class="arrow left">◀</button>
+          <div class="track"><div class="thumb"></div></div>
+          <button class="arrow right">▶</button>
+        </div>
       </div>
     </div>
 
@@ -186,8 +234,8 @@
       <div class="code">int a = 5, b = 6, c = 4;
 int result1 = --a * b - ++c;</div>
       <p>
-        The operators here are <b>-- (pre-decrement), * (multiply), - (subtract), and ++ (pre-increment)</b>. 
-        According to precedence rules: do the unary (--a, ++c) first, then multiplication, then subtraction.
+        The operators here are <b>-- (pre-decrement)</b>, <b>* (multiply)</b>, <b>- (subtract)</b>, and <b>++ (pre-increment)</b>. 
+        According to precedence rules: do the <b>unary (--a, ++c)</b> first, then <b>multiplication</b>, then <b>subtraction</b>.
       </p>
       <ul>
         <li><b>Step 1:</b> --a → a becomes 4.</li>
@@ -201,7 +249,7 @@ int result1 = --a * b - ++c;</div>
     <div class="section">
       <h2>🔄 Operator Associativity</h2>
       <p>
-        Sometimes the order depends on associativity. Most operators (like +, -, *, /) are <b>left-to-right</b>. 
+        Sometimes the order depends on <b>associativity</b>. Most operators (like <b>+</b>, <b>-</b>, <b>*</b>, <b>/</b>) are <b>left-to-right</b>. 
         For example:
       </p>
       <div class="code">int result = a * b / c; // evaluated as (a * b) / c</div>
@@ -234,6 +282,57 @@ a = b = c = 3; // c=3, then b=c, then a=b</div>
         "line_linked": { "enable": true, "color": "#00f2fe" },
         "color": { "value": "#00f2fe" }
       }
+    });
+
+    // Custom scrollbar logic
+    document.querySelectorAll(".table-wrapper").forEach(wrapper => {
+      const container = wrapper.querySelector(".table-container");
+      const track = wrapper.querySelector(".track");
+      const thumb = wrapper.querySelector(".thumb");
+      const leftBtn = wrapper.querySelector(".left");
+      const rightBtn = wrapper.querySelector(".right");
+
+      function updateThumb() {
+        const ratio = container.scrollLeft / (container.scrollWidth - container.clientWidth);
+        thumb.style.left = ratio * (track.clientWidth - thumb.clientWidth) + "px";
+      }
+
+      container.addEventListener("scroll", updateThumb);
+
+      // Drag functionality for thumb
+      let isDragging = false, startX, startScrollLeft;
+      thumb.addEventListener("mousedown", e => {
+        isDragging = true;
+        startX = e.pageX;
+        startScrollLeft = container.scrollLeft;
+        document.body.style.userSelect = "none";
+      });
+      window.addEventListener("mousemove", e => {
+        if (!isDragging) return;
+        const dx = e.pageX - startX;
+        const scrollAmount = (dx / track.clientWidth) * container.scrollWidth;
+        container.scrollLeft = startScrollLeft + scrollAmount;
+      });
+      window.addEventListener("mouseup", () => {
+        isDragging = false;
+        document.body.style.userSelect = "";
+      });
+
+      // Buttons
+      leftBtn.addEventListener("click", () => {
+        container.scrollBy({ left: -150, behavior: "smooth" });
+      });
+      rightBtn.addEventListener("click", () => {
+        container.scrollBy({ left: 150, behavior: "smooth" });
+      });
+
+      // Arrow keys
+      wrapper.querySelector(".scrollbar").addEventListener("keydown", e => {
+        if (e.key === "ArrowLeft") container.scrollBy({ left: -150, behavior: "smooth" });
+        if (e.key === "ArrowRight") container.scrollBy({ left: 150, behavior: "smooth" });
+      });
+
+      updateThumb();
     });
   </script>
 </body>
